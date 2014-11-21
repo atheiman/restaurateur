@@ -1,0 +1,53 @@
+<!-- Static navbar -->
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{% url 'browse:index' %}">Restaurateur</a>
+    </div>
+
+    <div id="navbar" class="collapse navbar-collapse">
+      {% block navbar %}
+        <ul class="nav navbar-nav">
+          <li class=""><a class="nav-link" href="#">American</a></li>
+          <li class=""><a class="nav-link" href="#">Mexican</a></li>
+          <li class=""><a class="nav-link" href="#">Italian</a></li>
+          <li class=""><a class="nav-link" href="#">Asian</a></li>
+          <li class=""><a class="nav-link" href="#">Desserts</a></li>
+          <li class=""><a class="nav-link" href="#">Snacks</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+
+                <!-- TODO: only show divider and staff section if user is in group staff -->
+                <li class="divider"></li>
+                <li><a href="{% url 'staff:index' %}">Staff</a></li>
+                <li><a href="#">My Mexican Restaurant</a></li>
+                <li><a href="#">My Italian Restaurant</a></li>
+
+                <li class="divider"></li>
+                <li class="dropdown-header">Recently viewed</li>
+                <li><a href="#">Recent Restaurant</a></li>
+                <li><a href="#">Another Restaurant</a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li><a href="{% url 'accounts:login' %}">Login</a></li>
+          {% endif %}
+        </ul>
+      {% endblock navbar %}
+    </div>
+  </div>
+</nav>
