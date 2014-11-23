@@ -1,0 +1,55 @@
+{% extends 'browse/base.html' %}
+
+{% block title %}{{ block.super }} | Browse{% endblock title %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1>{{ restaurant.name }}</h1>
+    {% if restaurant.markdown_description %}
+      <div class='markdown-element'>{{ restaurant.markdown_description }}</div>
+    {% elif restaurant.plain_text_description %}
+      <div>{{ restaurant.plain_text_description }}</div>
+    {% endif %}
+    <p>
+      Narrow restaurants by <input type='number' placeholder='ZIP Code'><input type='submit'>
+    </p>
+  </div>
+
+  <h1>Locations</h1>
+  <div class="row">
+    {% if locations %}
+      {% for l in locations %}
+        <div class="col-sm-6 col-lg-4">
+          <h2>
+            <a href="{% url 'browse:restaurant_location' restaurant.slug l.id %}">{{ l.name }}</a>
+          </h2>
+          <div>{{ l.plain_text_description }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class='alert alert-warning'>No locations listed.</div>
+    {% endif %}
+  </div>
+
+  <h1>Menus</h1>
+  <div class="row">
+    {% if menus %}
+      {% for m in menus %}
+        <div class="col-sm-6 col-lg-4">
+          <h2>
+            <a href="{% url 'browse:menu' restaurant.slug m.slug %}">{{ m.name }}</a>
+          </h2>
+          <div>{{ m.plain_text_description }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class='alert alert-warning'>No menus listed.</div>
+    {% endif %}
+  </div>
+{% endblock content %}
+
+{% block script %}
+<script>
+renderMarkdownElements()
+</script>
+{% endblock script %}

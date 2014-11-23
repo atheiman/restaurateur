@@ -5,65 +5,38 @@ from django.utils.text import slugify
 
 
 
+MARKDOWN_HELP_TEXT = "This field supports <a href='http://daringfireball.net/projects/markdown/basics' target='blank'>markdown formatting</a>."
+
+
+
 class Category(models.Model):
-    name = models.CharField(max_length=75)
-    slug = models.SlugField(max_length=75)
-    description = models.CharField(max_length=250, blank=True)
+    name = models.CharField(max_length=75, unique=True)
+    slug = models.SlugField(max_length=75, unique=True)
+    plain_text_description = models.CharField(max_length=250, blank=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'categories'
 
     def save(self, *args, **kwargs):
         # create slug as lowercase
         self.slug = slugify(self.name.lower())
 
         # save to db
-        super(Post, self).save(*args, **kwargs)
+        super(Category, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
 
 
 
-class RestaurantLocation(models.Model):
-    restaurant = models.ForeignKey(Restaurant, related_name="locations")
-    notes = models.TextField(max_length=150, blank=True)
-
-    # 1-10 rating
-    rating = models.PositiveIntegerField(validators=[MaxValueValidator(10)])
-
-    # Contact info
-    # https://docs.djangoproject.com/en/1.4/ref/contrib/localflavor/#united-states-of-america-us
-    address_line_1 = models.CharField(max_length=100)
-    address_line_2 = models.CharField(max_length=100, blank=True)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=2)
-    zip_code = models.PositiveIntegerField(validators=[MaxValueValidator(99999), MinValueValidator(11111)])
-    phone = models.CharField(max_length=10, blank=True)
-
-    def __unicode__(self):
-        return self.city + self.state
-
-
-
-class MenuItem(models.Model):
-    menu = models.ForeignKey(Restaurant, related_name="items")
-    name = models.CharField(max_length=75)
-    description = models.TextField(max_length=150, blank=True)
-    rating = models.PositiveIntegerField(validators=[MaxValueValidator(10)])
-
-
-
-class Menu(models.Model):
-    restaurant = models.ForeignKey(Restaurant, related_name="menus")
-    # breakfast, lunch, dinner, drinks, dessert, etc.
-    name = models.CharField(max_length=75)
-    description = models.TextField(max_length=150, blank=True)
-
-
-
 class Restaurant(models.Model):
-    name = models.CharField(max_length=150)
-    slug = models.SlugField(max_length=150)
-    description = models.TextField(max_length=500)
-    category = models.ForeignKey(Category, related_name="restaurants")
+    name = models.CharField(max_length=150, unique=True)
+    slug = models.SlugField(max_length=150, unique=True)
+    plain_text_description = models.TextField(max_length=500)
+    markdown_description = models.TextField(max_length=500, blank=True, help_text=MARKDOWN_HELP_TEXT)
+    category = models.ForeignKey('Category', related_name="restaurants")
+    tags = models.ManyToManyField('Tag', blank=True)
 
     # managers are allowed to edit the info of a restaurant
     managers = models.ManyToManyField(User, related_name="restaurants")
@@ -71,15 +44,131 @@ class Restaurant(models.Model):
     # phone to contact main office
     phone = models.CharField(max_length=10, blank=True)
 
-    # Restaurant rating is an average of each locations ratings
-    average_rating = models.PositiveIntegerField(validators=[MaxValueValidator(10)])
+    class Meta:
+        ordering = ['name']
+
+    def rating(self):
+        """average of each locations' ratings"""
+        total, count = 0.0, 0.0
+        for l in self.locations:
+            if l.rating is not None:
+                total += l.rating
+                count += 1
+        return total/count
+
+    def __unicode__(self):
+        return self.name
+
+
+
+class Tag(models.Model):
+    slug = models.SlugField(max_length=75, unique=True)
+
+    class Meta:
+        ordering = ['slug']
+
+    def save(self, *args, **kwargs):
+        # create slug as lowercase
+        self.slug = self.slug.lower()
+
+        # save to db
+        super(Tag, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.slug
+
+
+
+class RestaurantLocation(models.Model):
+    name = models.CharField(max_length=150)
+    restaurant = models.ForeignKey('Restaurant', related_name="locations")
+    plain_text_description = models.TextField(max_length=500, blank=True)
+    markdown_description = models.TextField(max_length=500, blank=True, help_text=MARKDOWN_HELP_TEXT)
+
+    # Contact info
+    # https://docs.djangoproject.com/en/1.4/ref/contrib/localflavor/#united-states-of-america-us
+    address_line_1 = models.CharField(max_length=100)
+    address_line_2 = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=2)
+    zip_code = models.PositiveIntegerField(
+        validators=[MaxValueValidator(99999), MinValueValidator(11111)]
+    )
+    phone = models.CharField(max_length=10, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def rating(self):
+        pass
+
+    def __unicode__(self):
+        return self.name
+
+
+
+class Menu(models.Model):
+    restaurant = models.ForeignKey('Restaurant', related_name="menus")
+
+    # breakfast, lunch, dinner, drinks, dessert, etc.
+    name = models.CharField(max_length=75)
+    slug = models.SlugField(max_length=75)
+    plain_text_description = models.TextField(max_length=500, blank=True)
+    markdown_description = models.TextField(max_length=500, blank=True, help_text=MARKDOWN_HELP_TEXT)
+
+    class Meta:
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
         # create slug as lowercase
         self.slug = slugify(self.name.lower())
 
         # save to db
-        super(Post, self).save(*args, **kwargs)
+        super(Menu, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.restaurant + self.name
+
+
+
+class MenuItem(models.Model):
+    menu = models.ForeignKey('Menu', related_name="items")
+    name = models.CharField(max_length=75)
+    plain_text_description = models.TextField(max_length=150, blank=True)
+    spicy = models.BooleanField(default=False)
+    featured = models.BooleanField(default=False)
+    allergies = models.CharField(max_length=75, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def rating(self):
+        pass
 
     def __unicode__(self):
         return self.name
+
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User)
+
+    date = models.DateField(auto_now=True)
+    rating = models.PositiveIntegerField(validators=[MaxValueValidator(10)])
+    comment = models.TextField(max_length=250, blank=True)
+
+    class Meta:
+        ordering = ['date']
+
+    def __unicode__(self):
+        return self.id
+
+
+
+class LocationReview(Review):
+    location = models.ForeignKey(RestaurantLocation, related_name='location_reviews')
+
+
+
+class MenuItemReview(Review):
+    menu_item = models.ForeignKey(MenuItem, related_name='menu_item_reviews')

@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from .views import index
+from .views import index, category, restaurant, restaurant_location, menu
 
 urlpatterns = patterns('',
     # /
@@ -10,17 +10,31 @@ urlpatterns = patterns('',
         name='index',
     ),
 
-    # # /obj_id/
-    # url(
-    #     r'^(?P<obj_id>[0-9]+)\/?$',
-    #     views.obj_id,
-    #     name='obj_id',
-    # ),
+    # /category_slug
+    url(
+        r'^(?P<category_slug>[a-z0-9_-]+)\/?$',
+        category,
+        name='category',
+    ),
 
-    # # /category_slug/
-    # url(
-    #     r'^(?P<category_slug>[a-z0-9_-]+)\/?$',
-    #     views.obj_id,
-    #     name='obj_id',
-    # ),
+    # /restaurant_slug
+    url(
+        r'^(?P<restaurant_slug>[a-z0-9_-]+)\/?$',
+        restaurant,
+        name='restaurant',
+    ),
+
+    # /restaurant_slug/location_id
+    url(
+        r'^(?P<restaurant_slug>[a-z0-9_-]+)/(?P<location_id>[0-9]+)\/?$',
+        restaurant_location,
+        name='restaurant_location',
+    ),
+
+    # /restaurant_slug/menu_slug
+    url(
+        r'^(?P<restaurant_slug>[a-z0-9_-]+)/(?P<menu_slug>[a-z0-9_-]+)\/?$',
+        menu,
+        name='menu',
+    ),
 )

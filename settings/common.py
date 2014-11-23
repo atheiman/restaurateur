@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     'browse',
     'accounts',
     'staff',
+    'core',
 )
 
 MIDDLEWARE_CLASSES = (
