@@ -1,8 +1,9 @@
 {% extends 'browse/base.html' %}
 
-{% block title %}{{ block.super }} | Browse{% endblock title %}
+{% block title %}{{ block.super }} | {{ restaurant.name }}{% endblock title %}
 
 {% block content %}
+
   <div class="jumbotron">
     <h1>{{ restaurant.name }}</h1>
     {% if restaurant.markdown_description %}
@@ -10,46 +11,81 @@
     {% elif restaurant.plain_text_description %}
       <div>{{ restaurant.plain_text_description }}</div>
     {% endif %}
-    <p>
-      Narrow restaurants by <input type='number' placeholder='ZIP Code'><input type='submit'>
-    </p>
   </div>
 
-  <h1>Locations</h1>
-  <div class="row">
-    {% if locations %}
-      {% for l in locations %}
+  {% if restaurant.specials.count > 0 %}
+    <h1 class="text-center">Today's Specials</h1>
+    <div class="row">
+      <!-- TODO: filter specials by available today. get date from python and pass with view. -->
+      {% for s in restaurant.specials.all|slice:":15" %}
+        <div class="col-xs-6 col-md-4 text-center">
+          <h2>{{ s.name }}</h2>
+          {% if s.plain_text_description != "" %}
+            <div>{{ s.plain_text_description }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-warning">No {{ restaurant.name }} specials listed.</div>
+  {% endif %}
+
+  {% if restaurant.locations.count > 0 %}
+    <h1 class="text-center">Locations</h1>
+    <div class="row">
+      {% for l in restaurant.locations.all|slice:":15" %}
         <div class="col-sm-6 col-lg-4">
-          <h2>
-            <a href="{% url 'browse:restaurant_location' restaurant.slug l.id %}">{{ l.name }}</a>
-          </h2>
-          <div>{{ l.plain_text_description }}</div>
+          <h2 class="text-center">{{ l.name }}</h2>
+          {% if l.plain_text_description != "" %}
+            <div class="col-xs-6">{{ l.plain_text_description }}</div>
+          {% endif %}
+          <div class="row">
+            <div class="col-xs-6 text-center">
+              <p>MAP</p>
+            </div>
+            <div class="col-xs-6">
+              {% if l.phone != "" %}
+                <p>{{ l.phone }}</p>
+              {% endif %}
+              <p>
+                {{ l.address_line_1 }}<br/>
+                {% if l.address_line_2 != "" %}
+                  {{ l.address_line_2 }}<br/>
+                {% endif %}
+                {{ l.city }}, {{ l.state }} {{ l.zip_code }}
+              </p>
+            </div>
+          </div><!-- end row -->
         </div>
       {% endfor %}
     {% else %}
-      <div class='alert alert-warning'>No locations listed.</div>
+      <div class='alert alert-warning'>No {{ restaurant.name }} locations listed.</div>
     {% endif %}
   </div>
 
-  <h1>Menus</h1>
-  <div class="row">
-    {% if menus %}
-      {% for m in menus %}
+
+  {% if restaurant.menus.count > 0 %}
+    <h1 class="text-center">Menus</h1>
+    <div class="row">
+      {% for m in restaurant.menus.all|slice:":15" %}
         <div class="col-sm-6 col-lg-4">
-          <h2>
+          <h2 class="text-center">
             <a href="{% url 'browse:menu' restaurant.slug m.slug %}">{{ m.name }}</a>
           </h2>
-          <div>{{ m.plain_text_description }}</div>
+          {% if m.plain_text_description != "" %}
+            <div>{{ m.plain_text_description }}</div>
+          {% endif %}
         </div>
       {% endfor %}
-    {% else %}
-      <div class='alert alert-warning'>No menus listed.</div>
-    {% endif %}
-  </div>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">No {{ restaurant.name }} menus listed.</div>
+  {% endif %}
+
 {% endblock content %}
 
 {% block script %}
 <script>
-renderMarkdownElements()
+renderMarkdownElements();
 </script>
 {% endblock script %}

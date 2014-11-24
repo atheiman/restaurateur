@@ -79,11 +79,28 @@ class Tag(models.Model):
 
 
 
+class Special(models.Model):
+    name = models.CharField(max_length=150)
+    restaurant = models.ForeignKey('Restaurant', related_name="specials")
+    plain_text_description = models.TextField(max_length=500, blank=True)
+
+    published = models.BooleanField(default=True, help_text="Display this special on the site?")
+
+    # days of week special is available
+    mon = models.BooleanField(default=False)
+    tue = models.BooleanField(default=False)
+    wed = models.BooleanField(default=False)
+    thu = models.BooleanField(default=False)
+    fri = models.BooleanField(default=False)
+    sat = models.BooleanField(default=False)
+    sun = models.BooleanField(default=False)
+
+
+
 class RestaurantLocation(models.Model):
     name = models.CharField(max_length=150)
     restaurant = models.ForeignKey('Restaurant', related_name="locations")
     plain_text_description = models.TextField(max_length=500, blank=True)
-    markdown_description = models.TextField(max_length=500, blank=True, help_text=MARKDOWN_HELP_TEXT)
 
     # Contact info
     # https://docs.djangoproject.com/en/1.4/ref/contrib/localflavor/#united-states-of-america-us
@@ -135,6 +152,8 @@ class MenuItem(models.Model):
     menu = models.ForeignKey('Menu', related_name="items")
     name = models.CharField(max_length=75)
     plain_text_description = models.TextField(max_length=150, blank=True)
+
+    price = models.PositiveIntegerField()
     spicy = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     allergies = models.CharField(max_length=75, blank=True)

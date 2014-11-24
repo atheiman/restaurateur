@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Restaurant, RestaurantLocation, Menu, MenuItem
+from .models import Category, Restaurant, RestaurantLocation, Menu, MenuItem, Special
 
 
 
@@ -15,6 +15,10 @@ class RestaurantLocationInline(admin.StackedInline):
     model = RestaurantLocation
     extra = 1
 
+class SpecialInline(admin.TabularInline):
+    model = Special
+    extra = 3
+
 class RestaurantAdmin(admin.ModelAdmin):
     fields = [
         'name',
@@ -25,7 +29,7 @@ class RestaurantAdmin(admin.ModelAdmin):
         'phone',
     ]
     list_display = ['name', 'category', 'phone']
-    inlines = [RestaurantLocationInline]
+    inlines = [RestaurantLocationInline, SpecialInline]
 
 class MenuItemInline(admin.TabularInline):
     model = MenuItem
