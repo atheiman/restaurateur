@@ -1,3 +1,3 @@
-# Accounts
+# Accounts App
 
-Manage account, register, login.
+Login, register, manage your account, and logout.
