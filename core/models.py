@@ -12,7 +12,7 @@ MARKDOWN_HELP_TEXT = "This field supports <a href='http://daringfireball.net/pro
 class Category(models.Model):
     name = models.CharField(max_length=75, unique=True)
     slug = models.SlugField(max_length=75, unique=True)
-    plain_text_description = models.CharField(max_length=250, blank=True)
+    plain_text_description = models.TextField(max_length=250, blank=True)
 
     class Meta:
         ordering = ['name']
@@ -131,7 +131,6 @@ class Menu(models.Model):
     name = models.CharField(max_length=75)
     slug = models.SlugField(max_length=75)
     plain_text_description = models.TextField(max_length=500, blank=True)
-    markdown_description = models.TextField(max_length=500, blank=True, help_text=MARKDOWN_HELP_TEXT)
 
     class Meta:
         ordering = ['name']
@@ -144,7 +143,7 @@ class Menu(models.Model):
         super(Menu, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.restaurant + self.name
+        return self.restaurant.name + " " + self.name
 
 
 
@@ -153,7 +152,13 @@ class MenuItem(models.Model):
     name = models.CharField(max_length=75)
     plain_text_description = models.TextField(max_length=150, blank=True)
 
-    price = models.PositiveIntegerField()
+    price = models.DecimalField(
+        blank=True,
+        null=True,
+        decimal_places=2,
+        max_digits=5,
+        validators=[MinValueValidator(0)],
+    )
     spicy = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     allergies = models.CharField(max_length=75, blank=True)

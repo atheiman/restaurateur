@@ -2,13 +2,13 @@
 
 {% block content %}
 
-<h1>Profile</h1>
+<h1 class="text-center">Profile</h1>
 
     {% for error in form.non_field_errors %}
         <div class='alert alert-danger'>{{ error }}</div>
     {% endfor %}
 
-    <form id='profileForm' method="post" action="{% url 'accounts:profile' %}">
+    <form id='profileForm' class="text-center" method="post" action="{% url 'accounts:profile' %}">
 
         {% csrf_token %}
 

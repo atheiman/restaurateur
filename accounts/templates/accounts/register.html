@@ -13,7 +13,7 @@
 {% endblock nav %}
 
 {% block page_title %}
-  <h2>Register</h2>
+  <h2 class="text-center">Register</h2>
 {% endblock page_title %}
 
 {% block content %}
@@ -22,7 +22,7 @@
     <p class='red bold'>{{ error }}</p>
   {% endfor %}
 
-  <form id='registerForm' method="post" action="{% url 'accounts_app:register' %}">
+  <form id='registerForm' class="text-center" method="post" action="{% url 'accounts_app:register' %}">
 
     {% csrf_token %}
 

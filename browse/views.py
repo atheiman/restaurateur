@@ -31,9 +31,8 @@ def category(request, category_slug):
     category = get_object_or_404(Category, slug=category_slug)
 
     # TODO: order restaurants by rating
-    restaurants = get_list_or_404(
-        Restaurant,
-        category=Category.objects.get(slug=category_slug)
+    restaurants = Restaurant.objects.filter(
+        category=Category.objects.get(slug=category_slug),
     )[:15]
 
     context = context_base

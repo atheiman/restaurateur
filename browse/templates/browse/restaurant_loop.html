@@ -2,9 +2,9 @@
   <div class="row">
     {% for r in restaurants %}
       <div class="col-sm-6 col-lg-4 text-center">
-        <h2>
+        <h3>
           <a href="{% url 'browse:restaurant' r.slug %}">{{ r.name }}</a>
-        </h2>
+        </h3>
         <p>{{ r.locations.count }} locations:</p>
         <div class="row">
           {% for l in r.locations.all|slice:":3" %}
@@ -15,8 +15,9 @@
         </div>
         <p>{{ r.plain_text_description }}</p>
       </div>
+      <hr class="visible-xs">
     {% endfor %}
   </div>
 {% else %}
-  <div class='alert alert-danger'>An error has occurred.</div>
+  <div class='alert alert-warning'>No restaurants found.</div>
 {% endif %}

@@ -7,9 +7,12 @@ from .models import Category, Restaurant, RestaurantLocation, Menu, MenuItem, Sp
 class CategoryAdmin(admin.ModelAdmin):
     fields = [
         'name',
-        'description',
+        'plain_text_description',
     ]
-    list_display = ['name']
+    list_display = [
+        'name',
+        'plain_text_description',
+    ]
 
 class RestaurantLocationInline(admin.StackedInline):
     model = RestaurantLocation
@@ -28,7 +31,11 @@ class RestaurantAdmin(admin.ModelAdmin):
         'managers',
         'phone',
     ]
-    list_display = ['name', 'category', 'phone']
+    list_display = [
+        'name',
+        'category',
+        'phone',
+    ]
     inlines = [RestaurantLocationInline, SpecialInline]
 
 class MenuItemInline(admin.TabularInline):
@@ -40,9 +47,11 @@ class MenuAdmin(admin.ModelAdmin):
         'restaurant',
         'name',
         'plain_text_description',
-        'markdown_description',
     ]
-    list_display = ['name', 'plain_text_description']
+    list_display = [
+        'name',
+        'plain_text_description',
+    ]
     inlines = [MenuItemInline]
 
 

@@ -15,7 +15,10 @@ urlpatterns = patterns('',
     url(
         r'^logout\/?$',
         logout_view,
-        {'next_page': '/accounts/login'},
+        {
+            # 'next_page': '/accounts/login',
+            'template_name': 'accounts/logout.html',
+        },
         name='logout',
     ),
 

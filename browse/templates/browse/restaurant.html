@@ -4,7 +4,7 @@
 
 {% block content %}
 
-  <div class="jumbotron">
+  <div class="jumbotron text-center">
     <h1>{{ restaurant.name }}</h1>
     {% if restaurant.markdown_description %}
       <div class='markdown-element'>{{ restaurant.markdown_description }}</div>
@@ -18,8 +18,8 @@
     <div class="row">
       <!-- TODO: filter specials by available today. get date from python and pass with view. -->
       {% for s in restaurant.specials.all|slice:":15" %}
-        <div class="col-xs-6 col-md-4 text-center">
-          <h2>{{ s.name }}</h2>
+        <div class="col-xs-6 col-md-4 col-lg-3 text-center">
+          <h3>{{ s.name }}</h3>
           {% if s.plain_text_description != "" %}
             <div>{{ s.plain_text_description }}</div>
           {% endif %}
@@ -30,12 +30,14 @@
     <div class="alert alert-warning">No {{ restaurant.name }} specials listed.</div>
   {% endif %}
 
+  <hr>
+
   {% if restaurant.locations.count > 0 %}
     <h1 class="text-center">Locations</h1>
     <div class="row">
       {% for l in restaurant.locations.all|slice:":15" %}
         <div class="col-sm-6 col-lg-4">
-          <h2 class="text-center">{{ l.name }}</h2>
+          <h3 class="text-center">{{ l.name }}</h3>
           {% if l.plain_text_description != "" %}
             <div class="col-xs-6">{{ l.plain_text_description }}</div>
           {% endif %}
@@ -55,23 +57,25 @@
                 {{ l.city }}, {{ l.state }} {{ l.zip_code }}
               </p>
             </div>
-          </div><!-- end row -->
+          </div>
         </div>
+        <hr class="visible-xs">
       {% endfor %}
     {% else %}
       <div class='alert alert-warning'>No {{ restaurant.name }} locations listed.</div>
     {% endif %}
   </div>
 
+  <hr>
 
   {% if restaurant.menus.count > 0 %}
     <h1 class="text-center">Menus</h1>
     <div class="row">
       {% for m in restaurant.menus.all|slice:":15" %}
-        <div class="col-sm-6 col-lg-4">
-          <h2 class="text-center">
+        <div class="col-xs-6 col-md-4 col-lg-3 text-center">
+          <h3>
             <a href="{% url 'browse:menu' restaurant.slug m.slug %}">{{ m.name }}</a>
-          </h2>
+          </h3>
           {% if m.plain_text_description != "" %}
             <div>{{ m.plain_text_description }}</div>
           {% endif %}
