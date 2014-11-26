@@ -13,11 +13,11 @@
     {% endif %}
   </div>
 
-  {% if restaurant.specials.count > 0 %}
+  {% if specials|length > 0 %}
     <h1 class="text-center">Today's Specials</h1>
     <div class="row">
       <!-- TODO: filter specials by available today. get date from python and pass with view. -->
-      {% for s in restaurant.specials.all|slice:":15" %}
+      {% for s in specials|slice:":15" %}
         <div class="col-xs-6 col-md-4 col-lg-3 text-center">
           <h3>{{ s.name }}</h3>
           {% if s.plain_text_description != "" %}
@@ -32,10 +32,10 @@
 
   <hr>
 
-  {% if restaurant.locations.count > 0 %}
+  {% if locations|length > 0 %}
     <h1 class="text-center">Locations</h1>
     <div class="row">
-      {% for l in restaurant.locations.all|slice:":15" %}
+      {% for l in locations|slice:":15" %}
         <div class="col-sm-6 col-lg-4">
           <h3 class="text-center">{{ l.name }}</h3>
           {% if l.plain_text_description != "" %}
@@ -68,10 +68,10 @@
 
   <hr>
 
-  {% if restaurant.menus.count > 0 %}
+  {% if menus|length > 0 %}
     <h1 class="text-center">Menus</h1>
     <div class="row">
-      {% for m in restaurant.menus.all|slice:":15" %}
+      {% for m in menus|slice:":15" %}
         <div class="col-xs-6 col-md-4 col-lg-3 text-center">
           <h3>
             <a href="{% url 'browse:menu' restaurant.slug m.slug %}">{{ m.name }}</a>

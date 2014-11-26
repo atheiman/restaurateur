@@ -97,6 +97,7 @@ class Special(models.Model):
 
 
 
+
 class RestaurantLocation(models.Model):
     name = models.CharField(max_length=150)
     restaurant = models.ForeignKey('Restaurant', related_name="locations")

@@ -1,11 +1,11 @@
-import json
-
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 from core.models import Category, Restaurant, Tag, RestaurantLocation, Menu,\
   MenuItem, LocationReview, MenuItemReview
+from core.global_vars import WEEKDAYS
 
 
 
@@ -46,9 +46,24 @@ def category(request, category_slug):
 def restaurant(request, restaurant_slug):
     restaurant = get_object_or_404(Restaurant, slug=restaurant_slug)
 
+    weekday = WEEKDAYS[timezone.now().weekday()]
+    all_specials = restaurant.specials.all()
+    specials = []
+    # filter specials by weekday today
+    for s in all_specials:
+        if getattr(s, weekday):
+            specials.append(s)
+
+    locations = restaurant.locations.all()
+
+    menus = restaurant.menus.all()
+
     context = context_base
     context['category'] = restaurant.category
     context['restaurant'] = restaurant
+    context['specials'] = specials
+    context['locations'] = locations
+    context['menus'] = menus
 
     return render(request, 'browse/restaurant.html', context)
 
