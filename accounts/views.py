@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import login as login_view, logout as logout_view
 from django.contrib.auth.decorators import login_required
 
-from .models import User, UserProfile
+from django.contrib.auth.models import User
 from .forms import ProfileForm, RegisterForm
 
 
