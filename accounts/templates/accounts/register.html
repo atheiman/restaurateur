@@ -1,28 +1,14 @@
-{% extends "accounts_app/layout.html" %}
-
-{% block style %}
-  <style>
-    label {
-      width:150px;
-    }
-  </style>
-{% endblock style %}
-
-{% block nav %}
-  <a href="{% url 'accounts_app:login' %}">Login</a>
-{% endblock nav %}
-
-{% block page_title %}
-  <h2 class="text-center">Register</h2>
-{% endblock page_title %}
+{% extends "accounts/base.html" %}
 
 {% block content %}
+
+  <h1 class="text-center">Register</h1>
 
   {% for error in form.non_field_errors %}
     <p class='red bold'>{{ error }}</p>
   {% endfor %}
 
-  <form id='registerForm' class="text-center" method="post" action="{% url 'accounts_app:register' %}">
+  <form id='registerForm' class="text-center" method="post" action="{% url 'accounts:register' %}">
 
     {% csrf_token %}
 
@@ -57,11 +43,3 @@
   </form>
 
 {% endblock content %}
-
-{% block script %}
-<script>
-  function main() {
-    document.getElementById('id_username').select();
-  }
-</script>
-{% endblock script %}
